@@ -25,11 +25,12 @@ metaChannel.subscribe('channel.occupancy', (msg) => {
 
 function addPublisherInstance() {
     resultArea.value += ('\n[LOCAL LOG - ' + (new Date().toLocaleTimeString()) + ' ]: Adding new publisher instance\n')
-    var myKey = '<YOUR-API-KEY>'
+    var myId = "clientId-" + Math.random().toString(36).substr(2, 16)
     var ably = new Ably.Realtime({
-        key: myKey
+        key: '<YOUR-API-KEY>',
+        clientId: myId
     });
-    var regularChannel = ably.channels.get("regular-channel")
+    var regularChannel = ably.channels.get(regularChannelName)
     console.log('adding publisher instance')
     regularChannel.publish('test-data', {
         data: "Dummy Data",
@@ -39,11 +40,12 @@ function addPublisherInstance() {
 
 function addSubscriberInstance() {
     resultArea.value += ('\n[LOCAL LOG - ' + (new Date().toLocaleTimeString()) + ' ]: Adding new subscriber instance\n')
-    var myKey = '<YOUR-API-KEY>'
+    var myId = "clientId-" + Math.random().toString(36).substr(2, 16)
     var ably = new Ably.Realtime({
-        key: myKey
+        key: '<YOUR-API-KEY>',
+        clientId: myId
     });
-    var regularChannel = ably.channels.get("regular-channel")
+    var regularChannel = ably.channels.get(regularChannelName)
     console.log('adding subscriber instance')
     regularChannel.subscribe('test-data', (data) => {
         //do whatever
@@ -51,20 +53,34 @@ function addSubscriberInstance() {
     })
 }
 
-function enterPresence() {
-    resultArea.value += ('\n[LOCAL LOG - ' + (new Date().toLocaleTimeString()) + ' ]: Entering presence\n')
+function addPublisherInstanceWithPresence() {
+    resultArea.value += ('\n[LOCAL LOG - ' + (new Date().toLocaleTimeString()) + ' ]: Adding new publisher instance\n')
+    var myId = "clientId-" + Math.random().toString(36).substr(2, 16)
     var ably = new Ably.Realtime({
-        key: apiKey
+        key: '<YOUR-API-KEY>',
+        clientId: myId
     });
-    var regularChannel = ably.channels.get("regular-channel")
+    var regularChannel = ably.channels.get(regularChannelName)
+    console.log('adding publisher instance')
+    regularChannel.publish('test-data', {
+        data: "Dummy Data",
+        time: Date.now()
+    })
     regularChannel.presence.enter();
 }
 
-function leavePresence() {
-    resultArea.value += ('\n[LOCAL LOG - ' + (new Date().toLocaleTimeString()) + ' ]: Leaving presence\n')
+function addSubscriberInstanceWithPresence() {
+    resultArea.value += ('\n[LOCAL LOG - ' + (new Date().toLocaleTimeString()) + ' ]: Adding new subscriber instance\n')
+    var myId = "clientId-" + Math.random().toString(36).substr(2, 16)
     var ably = new Ably.Realtime({
-        key: apiKey
+        key: '<YOUR-API-KEY>',
+        clientId: myId
     });
-    var regularChannel = ably.channels.get("regular-channel")
-    regularChannel.presence.leave();
+    var regularChannel = ably.channels.get(regularChannelName)
+    console.log('adding subscriber instance')
+    regularChannel.subscribe('test-data', (data) => {
+        //do whatever
+        console.log('Subscription working')
+    })
+    regularChannel.presence.enter();
 }
